@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+  {{> header}}
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .movie-card {
+            margin-bottom: 20px;
+        }
+        .card-body p {
+            margin-bottom: 5px;
+        }
+        .card-img-top {
+            max-height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Data</h1>
+
+    <div class="container">
+        <div class="row">
+            {{#each movieData}}
+            <div class="col-md-6">
+                <div class="card movie-card">
+                    <img src="{{ this.poster }}" class="card-img-top" alt="{{ this.title }} Poster">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ this.title }}</h5>
+                        <p class="card-text"><strong>Plot:</strong> {{ this.plot }}</p>
+                        <p class="card-text"><strong>Genres:</strong> {{ this.genres }}</p>
+                        <p class="card-text"><strong>Runtime:</strong> {{ this.runtime }}</p>
+                        <p class="card-text"><strong>Rated:</strong> {{ this.rated }}</p>
+                        <p class="card-text"><strong>Cast:</strong> {{ this.cast }}</p>
+                        <p class="card-text"><strong>Full Plot:</strong> {{ this.fullplot }}</p>
+                        <p class="card-text"><strong>Language:</strong> {{ this.language }}</p>
+                        <p class="card-text"><strong>Released:</strong> {{ this.released }}</p>
+                        <p class="card-text"><strong>Directors:</strong> {{ this.directors }}</p>
+                        <p class="card-text"><strong>Writers:</strong> {{ this.writers }}</p>
+                        <p class="card-text"><strong>Awards:</strong> {{ this.awards }}</p>
+                        <p class="card-text"><strong>Last Updated:</strong> {{ this.lastupdated }}</p>
+                        <p class="card-text"><strong>Year:</strong> {{ this.year }}</p>
+                        <p class="card-text"><strong>IMDb:</strong> {{ this.imdb }}</p>
+                        <p class="card-text"><strong>Countries:</strong> {{ this.countries }}</p>
+                        <p class="card-text"><strong>Type:</strong> {{ this.type }}</p>
+                        <p class="card-text"><strong>Tomatoes:</strong> {{ this.tomatoes }}</p>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- {{> footer}} -->
+
+</body>
+</html>

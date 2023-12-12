@@ -1,0 +1,27 @@
+  {{> header}}
+<form id="loginForm" action="/">
+
+<h1>Search here your movie data</h1>
+  <label for="email">Page</label>
+  <input type="text" id="pageInput" name="Page" />
+  <div class="email error"></div>
+  <label for="password">Perpage</label>
+  <input type="" id="perpageInput" name="perpage" />
+  <div class="password error"></div>
+  <button type="submit">submit</button>
+</form>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    var pageValue = document.getElementById('pageInput').value;
+    var perpageValue = document.getElementById('perpageInput').value;
+
+    var apiUrl = '/api/step3/' + pageValue + '/' + perpageValue;
+
+
+    window.location.href = apiUrl; 
+ 
+  });
+</script>
+  {{> footer}}
