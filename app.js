@@ -5,10 +5,10 @@ var exphbs = require('express-handlebars');
 var mongoose = require('mongoose');
 var app      = express();
 var database = require('./config/database');
-var bodyParser = require('body-parser');         // pull information from HTML POST (express4)
+var bodyParser = require('body-parser');         
 var port     =  3000;
 const customHelpers = require('./custom_helper');
-const movieDB = require('./models/movieDB'); // Import your created module
+const movieDB = require('./models/movieDB'); 
 require("dotenv").config();
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
@@ -34,12 +34,10 @@ app.engine(
 app.set('view engine', 'hbs');
 
 
-app.use(bodyParser.urlencoded({'extended':'true'}));            // parse application/x-www-form-urlencoded
-app.use(bodyParser.json());                                     // parse application/json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
-
-app.use(express.static(path.join(__dirname, 'public'))); // tellig the express that use the public folder to get the static files from the project. path join is used to join current directoty path to public.
-
+app.use(bodyParser.urlencoded({'extended':'true'}));         
+app.use(bodyParser.json());                                    
+app.use(bodyParser.json({ type: 'application/vnd.api+json' })); 
+app.use(express.static(path.join(__dirname, 'public'))); 
 const hbs = exphbs.create({
     handlebars: customHelpers,
     extname: '.hbs', 
@@ -111,33 +109,15 @@ async function startServer() {
   try {
     await movieDB.initialize(process.env.my_url);
 
-    // await movieDB.AllMovies();
+    
 
-
-    // await movieDB.getMovieById("573a1393f29313caabcdcda1");
-    // console.log(data);
-    // await movieDB.addNewMovie(data);
-
-    // await movieDB.getAllMovies(3,5,"The Great Train Robbery");
-
-    // await movieDB.updateMovieById(updateddata,'573a1393f29313caabcdc9ab');
-//     const movieIdToDelete = '573a1390f29313caabcd4803'; // Replace with the actual movie ID
-// movieDB.deleteMovieById(movieIdToDelete)
-//   .then(result => {
-//     console.log(result); // Output the result of the deletion
-//   })
-//   .catch(error => {
-//     console.error('Error deleting movie:', error);
-//   });
-
-    // Start your server here
     app.listen(3000, () => {
       console.log('Server started on port 3000');
 
 
     });
   } catch (error) {
-    // Handle initialization error
+   
     console.error('Error starting the server:', error);
   }
 }
@@ -155,19 +135,24 @@ app.get('/search',requireAuth,function(req,res){
   res.render('search');
 });
 
-app.get('/api/step3/:param1/:param2', async (req, res) => {
+app.get('/api/step3/:param1?/:param2/:param3', async (req, res) => {
   try {
-    const param1 = parseInt(req.params.param1);
-    const param2 = parseInt(req.params.param2);
+    const param1 = parseInt(req.params.param2);
+    const param2 = parseInt(req.params.param3);
+    const title = req.params.param1 || null; 
 
-    ;
-      // console.log(param1);
-    // Use param1 and param2 in your code
-    moviesInfo= await movieDB.getAllMovies(param1,param2);
+   
+    let moviesInfo;
+
+    if (title) {
+      moviesInfo = await movieDB.getAllMovies(param1, param2, title);
+    } else {
+      moviesInfo = await movieDB.getAllMovies(param1, param2);
+    }
+
     console.log(moviesInfo.movies);
-    resultmovies=moviesInfo.movies;
-    // console.log(movies);
-    res.render('viewdata', { movieData: resultmovies  });
+    const resultmovies = moviesInfo.movies;
+    res.render('viewdata', { movieData: resultmovies });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -206,14 +191,10 @@ app.get('/api/Movies/:param1/:param2/:param3?', async (req, res) => {
     const param3 = req.query.param3 ? req.query.param3 : null;
 
       console.log(param3);
-    // Use param1 and param2 in your code
+   
     const movies = await movieDB.getAllMovies(param1, param2,param3);
 
-    // // Handle the retrieved movies data
-    // console.log(movies); // Log retrieved movies data
-
-
-    // Send the movies data as a response
+ 
     res.json(movies);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -251,19 +232,38 @@ app.delete('/api/Movies/:param1', async (req, res) => {
   try {
     const param1 = req.params.param1;
   
-    // Use param1 and param2 in your code
+ 
     const movies = await movieDB.deleteMovieById(param1);
 
-    // // Handle the retrieved movies data
-    // console.log(movies); // Log retrieved movies data
-
-
-    // Send the movies data as a response
+  
     res.json(movies);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// app.listen(port);
-// console.log("App listening on port : " + port);
+app.get('/searchyear',requireAuth,function(req,res){
+  res.render('searchyear');
+});
+
+app.get('/api/newfeature', async (req, res) => {
+  try {
+    const { year } = req.query; 
+
+  
+    if (year) {
+    
+      const movieData = await movieDB.getMoviesByYear(year);
+      
+    res.render('moviesByYear', { movies: movieData});
+      
+    } else {
+    
+      res.status(400).json({ error: 'Please provide the year parameter.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+

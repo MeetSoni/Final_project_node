@@ -64,14 +64,16 @@ async function addNewMovie(data) {
 
 
 
+
+
 async function getAllMovies(page, perPage, title) {
   const db = getDatabase();
 
   try {
     // Access the database and collection
-    const collection = db.collection('movies'); // Replace 'movies' with your collection name
+    const collection = db.collection('movies'); 
 
-    // Construct the query based on the title filter (if provided)
+   
     const query = title ? { title: { $regex: title, $options: 'i' } } : {};
     console.log(query);
 
@@ -85,7 +87,7 @@ async function getAllMovies(page, perPage, title) {
     // Fetch movies for the specified page, sorted by Movie_id
     const movies = await collection
       .find(query)
-      .sort({ Movie_id: 1 }) // Sort by Movie_id in ascending order
+      .sort({ Movie_id: 1 }) 
       .skip(skip)
       .limit(limit)
       .toArray();
@@ -93,33 +95,15 @@ async function getAllMovies(page, perPage, title) {
     console.log(totalCount);
     
     return {
-      movies,
-      totalCount // Include totalCount in the returned object
+      movies
     };
   } catch (error) {
-    // Handle errors if any
+  
     console.error('Error fetching movies:', error);
     throw new Error('Error fetching movies');
   }
 }
 
-// Example usage:
-// const pageNumber = 2;
-// const itemsPerPage = 5;
-// const filterByTitle = 'specific title'; // Set to null or undefined to ignore title filter
-
-// getAllMovies(pageNumber, itemsPerPage, filterByTitle)
-//   .then(result => {
-//     if (result) {
-//       console.log('Total movies:', result.totalCount);
-//       console.log('Movies for page', pageNumber, ':', result.movies);
-//     } else {
-//       console.log('Failed to fetch movies.');
-//     }
-//   })
-//   .catch(err => {
-//     console.error('Error:', err);
-//   });
 
   
 
@@ -162,6 +146,20 @@ async function deleteMovieById(id) {
   }
 }
 
+
+async function getMoviesByYear(year) {
+  try {
+    const db = getDatabase();
+
+    // Query movies based on the provided year
+    const movies = await db.collection('movies').find({ year: parseInt(year) }).toArray();
+
+    return movies;
+  } catch (error) {
+    console.error('Error in getMoviesByYear:', error);
+    throw new Error('Error in getMoviesByYear');
+  }
+}
 // Add other CRUD operations as needed (create, update, delete)
 
 module.exports = {
@@ -171,6 +169,7 @@ module.exports = {
   getMovieById,
   addNewMovie,
   updateMovieById,
-  deleteMovieById
-  // Add other functions here
+  deleteMovieById,
+  getMoviesByYear,
+
 };
